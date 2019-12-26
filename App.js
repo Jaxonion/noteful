@@ -40,6 +40,18 @@ class App extends React.Component {
     this.setState({ folders: [...this.state.folders, {id: createdId, name: folderToAdd}]})
     //window.location.href = ('/')
   }
+
+  deleteNote = (noteName) => {
+    //const notes = this.state.notes
+    //console.log(notes)
+    //console.log(noteName);
+    let notes = this.state.notes.filter(note=> note.name !== noteName)
+    //console.log(notes) 
+    this.setState({
+      notes
+    })
+    //console.log(this.state.notes)
+  }
   
   render() {
     const contextValue = {
@@ -47,6 +59,7 @@ class App extends React.Component {
       notes: this.state.notes,
       setFolder: this.addFolder,
       setNote: this.addNote,
+      removeNote: this.deleteNote
     }
     return(
       <notefulContext.Provider
@@ -57,19 +70,19 @@ class App extends React.Component {
             <Route path={['/note/:dynamic']}
               render={(props) => {
                 return(
-                  <SelectedFolderSideBar {...props} state={this.state} />
+                  <SelectedFolderSideBar {...props} />
                 )
               }} />
             <Route exact path={'/'}
               render={() => {
                 return(
-                  <MainSidebar state={this.state} />
+                  <MainSidebar />
                 )
               }} />
             <Route path={['/folder/:dynamic']}
               render={() => {
                 return(
-                  <MainSidebar state={this.state} />
+                  <MainSidebar />
                 )
               }} />
             <Route path={['/NewNote', '/NewFolder']} component={AddSidebar} />
@@ -79,27 +92,27 @@ class App extends React.Component {
           <section className='Notes'>
             <Route exact path='/' render={() => {
               return(              
-                <Main state={this.state} />
+                <Main />
               )
             }} />
             <Route path='/NewNote' render={() => {
               return(
-                <NewNote state={this.state} />
+                <NewNote />
               )
             }} />
             <Route path='/NewFolder' render={() => {
               return(
-                <NewFolder state={this.state} addFolder={this.addFolder} />
+                <NewFolder />
               )
             }} />
             <Route path='/folder/:dynamic' render={(props) => {
               return(
-                <SelectedFolder {...props} state={this.state} />
+                <SelectedFolder {...props} />
               )
             }} />
             <Route path='/note/:dynamic' render={(props) => {
               return(
-                <SelectedNote {...props} state={this.state} />
+                <SelectedNote {...props}/>
               )
             }}/>
           </section>

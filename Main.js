@@ -4,13 +4,20 @@ import notefulContext from './notefulContext';
 
 class Main extends React.Component {
     static contextType = notefulContext;
+    removeNote = (noteId) => {
+        //console.log(`removeNote: ${noteId}`)
+        this.context.removeNote(noteId);
+    }
     render() {
         let value = this.context;
         console.log(this.props)
         const notes = value.notes.map((note, i) => {
             return(
-                <div key={i} className='note'>
+                <div key={i} id={note.name} className='note'>
                     <Link to={`/note/${note.name}`}>{note.name}</Link>
+                    <button
+                        className='deleteButton'
+                        onClick={e => this.removeNote(e.target.parentElement.id)}>Delete</button>
                 </div>
                
             )

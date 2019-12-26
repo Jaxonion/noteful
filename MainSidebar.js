@@ -1,9 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import notefulContext from './notefulContext';
 
 class MainSidebar extends React.Component {
+    static contextType = notefulContext;
     render() {
-        const folders = this.props.state.folders.map((folder, i) => {
+        let value = this.context;
+        const folders = value.folders.map((folder, i) => {
             return(
                 <div key={i} className='folder'>
                     <Link to={`/folder/${folder.id}`}>{folder.name}</Link>

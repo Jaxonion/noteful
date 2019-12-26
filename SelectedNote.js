@@ -5,7 +5,8 @@ import { Link } from 'react-router-dom';
 export default class SelectedNote extends React.Component {
     static contextType = notefulContext;
     render() {
-        const selectedNote = this.props.state.notes.filter((note) => {
+        let value = this.context;
+        const selectedNote = value.notes.filter((note) => {
             return note.name === this.props.match.params.dynamic
         })
         const note = selectedNote.map((note, i) => {

@@ -1,17 +1,26 @@
 import React from 'react';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
+import notefulContext from './notefulContext';
 
 export default class SelectedFolder extends React.Component {
-    
+    static contextType = notefulContext;
+    removeNote = (noteId) => {
+        //console.log(`removeNote: ${noteId}`)
+        this.context.removeNote(noteId);
+    }
     render() {
-        console.log(this.props)
-        const selectedNotes = this.props.state.notes.filter((note) => {
+        let value = this.context;
+        //console.log(this.props)
+        const selectedNotes = value.notes.filter((note) => {
             return note.folderId === this.props.match.params.dynamic
         })
-        const foldersNotes = selectedNotes.map((note, i) => {
+        const foldersNotes = selectedNotes.map((note) => {
             return(
-                <div key={i} className='note'>
+                <div key={note.id} id={note.name} className='note'>
                     <Link to={`/note/${note.name}`}>{note.name}</Link>
+                    <button
+                        className='deleteButton'
+                        onClick={e => this.removeNote(e.target.parentElement.id)}>Delete</button>
                 </div>
             )
         })

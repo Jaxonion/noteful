@@ -1,13 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import notefulContext from './notefulContext';
 
 export default class SelectedFolderSideBar extends React.Component {
+    static contextType = notefulContext;
     render() {
-        const selectedNote = this.props.state.notes.filter((note) => {
+        let value = this.context;
+        const selectedNote = value.notes.filter((note) => {
             return note.name === this.props.match.params.dynamic
         })
         console.log(selectedNote[0].folderId)
-        const selectedFolder = this.props.state.folders.filter((folder) => {
+        const selectedFolder = value.folders.filter((folder) => {
             return folder.id === selectedNote[0].folderId
         })
         console.log(selectedFolder)
