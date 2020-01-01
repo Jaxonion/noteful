@@ -8,7 +8,7 @@ import AddSidebar from './AddSidebar.js';
 import NewFolder from './NewFolder.js';
 import notefulContext from './notefulContext';
 import './index.css'
-import STORE from './STORE';
+//import STORE from './STORE';
 import SelectedFolder from './SelectedFolder';
 import SelectedNote from './SelectedNote';
 import SelectedFolderSideBar from './SelectedFolderSideBar';
@@ -24,33 +24,90 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    this.setState({
-      folders: STORE.folders,
-      notes: STORE.notes 
-    })
+    fetch('http://localhost:9090/folders')
+      .then(res => {
+        if(!res.ok) {
+          throw new Error('fetch didnt work')
+        }
+        return res;
+      })
+      .then(response => {
+        return response.json()
+      })
+      .then(res => {
+        console.log(res)
+        this.setState({
+          folders: res
+        })
+      })
+    fetch('http://localhost:9090/notes')
+      .then(res => {
+        if(!res.ok) {
+          throw new Error('fetch didnt work')
+        }
+        return res;
+      })
+      .then(response => {
+        return response.json()
+      })
+      .then(res => {
+        console.log(res)
+        this.setState({
+          notes: res
+        })
+      })
   }
 
-  addNote = (noteToAdd, folderId, noteContent) => {
+  addNote = (noteToAdd, folderId, noteContent, noteId) => {
+    fetch(`http://localhost:9090/notes`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        id: noteId,
+        name: noteToAdd,
+        folderId: folderId,
+        content: noteContent
+      })
+    })
     this.setState({ notes: [...this.state.notes, {name: noteToAdd, folderId: folderId, content: noteContent}]})
   }
   
   addFolder = (folderToAdd, createdId) => {
+    fetch(`http://localhost:9090/folders`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        id: createdId,
+        name: folderToAdd
+      })
+    })
     console.log(createdId)
     console.log(folderToAdd)
     this.setState({ folders: [...this.state.folders, {id: createdId, name: folderToAdd}]})
-    //window.location.href = ('/')
+  
+    
   }
 
-  deleteNote = (noteName) => {
+  deleteNote = (noteId) => {
+    fetch(`http://localhost:9090/notes/${noteId}`, {
+      method: 'DELETE',
+      headers: {
+        'content-type': 'application/json'
+      }
+    })
     //const notes = this.state.notes
     //console.log(notes)
     //console.log(noteName);
-    let notes = this.state.notes.filter(note=> note.name !== noteName)
+    let notes = this.state.notes.filter(note=> note.id !== noteId)
     //console.log(notes) 
     this.setState({
       notes
     })
-    //console.log(this.state.notes)
+    console.log(this.state.notes)
   }
   
   render() {
@@ -85,7 +142,12 @@ class App extends React.Component {
                   <MainSidebar />
                 )
               }} />
-            <Route path={['/NewNote', '/NewFolder']} component={AddSidebar} />
+            <Route path={['/NewNote', '/NewFolder']}
+              render={() => {
+                return(
+                  <AddSidebar />
+                )
+              }} />
 
           </div>
 
@@ -100,9 +162,9 @@ class App extends React.Component {
                 <NewNote />
               )
             }} />
-            <Route path='/NewFolder' render={() => {
+            <Route path='/NewFolder' render={(props) => {
               return(
-                <NewFolder />
+                <NewFolder {...props} />
               )
             }} />
             <Route path='/folder/:dynamic' render={(props) => {

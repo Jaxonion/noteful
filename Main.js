@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import notefulContext from './notefulContext';
+import NoteError from './NoteError';
 
 class Main extends React.Component {
     static contextType = notefulContext;
@@ -13,12 +14,14 @@ class Main extends React.Component {
         console.log(this.props)
         const notes = value.notes.map((note, i) => {
             return(
-                <div key={i} id={note.name} className='note'>
-                    <Link to={`/note/${note.name}`}>{note.name}</Link>
+                
+                <div key={i} id={note.id} className='note'>
+                    <Link to={`/note/${note.id}`}>{note.name}</Link>
                     <button
                         className='deleteButton'
                         onClick={e => this.removeNote(e.target.parentElement.id)}>Delete</button>
                 </div>
+                
                
             )
         })

@@ -3,12 +3,50 @@ import { Link } from 'react-router-dom';
 import notefulContext from './notefulContext';
 
 class NewNote extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            note: {
+                name: '',
+                touched: false
+                
+            }
+        }
+    }
     static contextType = notefulContext;
 
     updateNote = () => {
         console.log(document.getElementById('folderId').value)
-        this.context.setNote(document.getElementById('noteName').value, document.getElementById('folderId').value, document.getElementById('noteContent').value)
+        this.context.setNote(document.getElementById('noteName').value, document.getElementById('folderId').value, document.getElementById('noteContent').value, this.createNote())
     }
+
+    createNote = () => {
+        return '_' + Math.random().toString(36).substr(2, 9);
+    }
+
+    validateNote = () => {
+        const {name, touched} = this.state.note;
+        if(!touched) {
+            return 'no name'
+        }
+        if(name && name.length < 1) {
+            return 'no name'
+        }
+        if(name === '') {
+            return 'no name'
+        }
+    }
+
+    updateState = (name, touched) => {
+        //console.log(name, touched)
+        this.setState({
+            note: {
+                name: name,
+                touched: touched
+            }
+        })
+    }
+
     render() {
         //let noteContent = document.getElementById('noteContent').value;
         //let noteName = document.getElementById('noteName').value;
@@ -29,7 +67,8 @@ class NewNote extends React.Component {
 
                         <label>Name</label>
 
-                        <input type='text' id='noteName' placeholder='Note Name' />
+                        <input
+                            onChange={(name, touched) => this.updateState(document.getElementById('noteName').value, true)} type='text' id='noteName' placeholder='Note Name' />
 
                         <label>Content</label>
 
@@ -41,6 +80,9 @@ class NewNote extends React.Component {
 
                         <Link to='/'>
                             <button
+                                disabled={
+                                    this.validateNote()
+                                }
                                 onClick={this.updateNote}
                                 >
                                 Add Note
